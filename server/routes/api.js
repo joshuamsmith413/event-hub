@@ -115,24 +115,30 @@ router.get('/special', verifyToken, (req, res) => {
 })
 
 router.post('/register', (req, res) => {
-  bcrypt.genSalt(10, function(err, salt) {
-    bcrypt.hash(req.body.password, salt, function(err, hash) {
-      const userData = {
-        email: req.body.email,
-        password: hash
-      }
-      const user = new User(userData)
-      user.save((err, registeredUser) => {
-        if (err) {
-          console.log(err)      
-        } else {
-          let payload = {subject: registeredUser._id}
-          let token = jwt.sign(payload, 'secretKey')
-          res.status(200).send({token})
-        }
-      })
-    });
-  });
+  User.findOne({email: req.body.email}, (er, userTemp) => {
+    if (!!userTemp) {
+      res.status(401).send('Email is being used')
+    } else {
+      bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(req.body.password, salt, function(err, hash) {
+          const userData = {
+            email: req.body.email,
+            password: hash
+          }
+          const user = new User(userData)
+          user.save((err, registeredUser) => {
+            if (err) {
+              console.log(err)      
+            } else {
+              let payload = {subject: registeredUser._id}
+              let token = jwt.sign(payload, 'secretKey')
+              res.status(200).send({token})
+            }
+          })
+        });
+      });
+    }
+  })
 })
 
 router.post('/login', (req, res) => {
