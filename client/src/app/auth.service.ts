@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
 export class AuthService {
 
 
-  private _registerUrl = "http://localhost:3000/api/register";
-  private _loginUrl = "http://localhost:3000/api/login";
+  private _registerUrl = 'http://localhost:3000/api/register';
+  private _loginUrl = 'http://localhost:3000/api/login';
 
   constructor(private http: HttpClient,
               private _router: Router) { }
@@ -27,11 +27,11 @@ export class AuthService {
   }
 
   getToken() {
-    return localStorage.getItem('token')
+    return localStorage.getItem('token');
   }
 
   logoutUser() {
-    localStorage.removeItem('token')
-    this._router.navigate(['/events'])
+    localStorage.removeItem('token');
+    this._router.navigate(['/events']);
   }
 }

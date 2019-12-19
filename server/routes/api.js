@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken')
 const db = "mongodb://testuser:testpw@ds123136.mlab.com:23136/eventsdb";
-// mongoose.Promise = global.Promise;
+const bcrypt = require('bcrypt');
 
 mongoose.connect(db, function(err){
     if(err){
@@ -115,36 +115,49 @@ router.get('/special', verifyToken, (req, res) => {
 })
 
 router.post('/register', (req, res) => {
-  let userData = req.body
-  let user = new User(userData)
-  user.save((err, registeredUser) => {
-    if (err) {
-      console.log(err)      
-    } else {
-      let payload = {subject: registeredUser._id}
-      let token = jwt.sign(payload, 'secretKey')
-      res.status(200).send({token})
-    }
-  })
+  bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.hash(req.body.password, salt, function(err, hash) {
+      const userData = {
+        email: req.body.email,
+        password: hash
+      }
+      const user = new User(userData)
+      user.save((err, registeredUser) => {
+        if (err) {
+          console.log(err)      
+        } else {
+          let payload = {subject: registeredUser._id}
+          let token = jwt.sign(payload, 'secretKey')
+          res.status(200).send({token})
+        }
+      })
+    });
+  });
 })
 
 router.post('/login', (req, res) => {
-  let userData = req.body
-  User.findOne({email: userData.email}, (err, user) => {
-    if (err) {
-      console.log(err)    
-    } else {
+    User.findOne({email: req.body.email}, (err, user) => {
       if (!user) {
-        res.status(401).send('Invalid Email')
-      } else 
-      if ( user.password !== userData.password) {
-        res.status(401).send('Invalid Password')
+        res.status(401).send('Invalid Email/Password Combo')
       } else {
-        let payload = {subject: user._id}
-        let token = jwt.sign(payload, 'secretKey')
-        res.status(200).send({token})
+        bcrypt.compare(req.body.password, user.password, function(err, resBoolean) {
+          if (err) {
+            console.log(err)    
+          } else { 
+            if (!resBoolean) {
+              res.status(401).send('Invalid Email/Password Combo')
+            } else {
+              let payload = {subject: user._id}
+              let token = jwt.sign(payload, 'secretKey')
+              res.status(200).send({token})
+            }
+          }
+        })
       }
-    }
+    })
+
+  router.get('/users', (req, res) => {
+    console.log(req)
   })
 })
 
