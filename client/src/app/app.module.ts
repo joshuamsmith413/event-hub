@@ -13,7 +13,6 @@ import { AuthService } from './auth.service';
 import { EventService } from './event.service';
 import { AuthGuard } from './auth.guard';
 import { TokenInterceptorService } from './token-interceptor.service';
-import { NewEventComponent } from './new-event/new-event.component';
 
 
 @NgModule({
@@ -22,8 +21,7 @@ import { NewEventComponent } from './new-event/new-event.component';
     RegisterComponent,
     LoginComponent,
     EventsComponent,
-    SpecialEventsComponent,
-    NewEventComponent
+    SpecialEventsComponent
   ],
   imports: [
     BrowserModule,
