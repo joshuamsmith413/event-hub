@@ -12,10 +12,14 @@ export class EventService {
   constructor(private http: HttpClient) { }
 
   getEvents() {
-    return this.http.get<any>(this._eventsUrl)
+    return this.http.get<any>(this._eventsUrl);
+  }
+
+  addEvent(event: any) {
+    return this.http.post<any>(this._eventsUrl, event);
   }
 
   getSpecialEvents() {
-    return this.http.get<any>(this._specialEventsUrl)
+    return this.http.get<any>(this._specialEventsUrl);
   }
 }
