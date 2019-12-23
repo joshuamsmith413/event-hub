@@ -3,16 +3,20 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken')
-const db = "mongodb://testuser:testpw@ds123136.mlab.com:23136/eventsdb";
+const db = "mongodb+srv://josh:windows@cluster0-dymgv.mongodb.net/test?retryWrites=true&w=majority"
 const bcrypt = require('bcrypt');
 
-mongoose.connect(db, function(err){
-    if(err){
-        console.error('Error! ' + err)
-    } else {
-      console.log('Connected to mongodb')      
-    }
-});
+
+// const MongoClient = require('mongodb').MongoClient;
+// const uri = "mongodb+srv://josh:windows@cluster0-dymgv.mongodb.net/test?retryWrites=true&w=majority";
+// const client = new MongoClient(uri, { useNewUrlParser: true });
+// client.connect(err => {
+//   const collection = client.db("test").collection("devices");
+//   // perform actions on the collection object
+//   client.close();
+// });
+
+mongoose.connect(db, { useNewUrlParser: true });
 
 function verifyToken(req, res, next) {
   if(!req.headers.authorization) {
@@ -126,6 +130,7 @@ router.post('/register', (req, res) => {
             password: hash
           }
           const user = new User(userData)
+          console.log(user)
           user.save((err, registeredUser) => {
             if (err) {
               console.log(err)      
@@ -142,29 +147,30 @@ router.post('/register', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
-    User.findOne({email: req.body.email}, (err, user) => {
-      if (!user) {
-        res.status(401).send('Invalid Email/Password Combo')
-      } else {
-        bcrypt.compare(req.body.password, user.password, function(err, resBoolean) {
-          if (err) {
-            console.log(err)    
-          } else { 
-            if (!resBoolean) {
-              res.status(401).send('Invalid Email/Password Combo')
-            } else {
-              let payload = {subject: user._id}
-              let token = jwt.sign(payload, 'secretKey')
-              res.status(200).send({token})
-            }
+  User.findOne({email: req.body.email}, (err, user) => {
+    if (!user) {
+      res.status(401).send('Invalid Email/Password Combo')
+    } else {
+      bcrypt.compare(req.body.password, user.password, function(err, resBoolean) {
+        if (err) {
+          console.log(err)    
+        } else { 
+          if (!resBoolean) {
+            res.status(401).send('Invalid Email/Password Combo')
+          } else {
+            let payload = {subject: user._id}
+            let token = jwt.sign(payload, 'secretKey')
+            res.status(200).send({token})
           }
-        })
-      }
-    })
-
-  router.get('/users', (req, res) => {
-    console.log(req)
+        }
+      })
+    }
   })
+})
+
+router.get('/users', async (req, res) => {
+  const users = await User.find({});
+  res.json(users);
 })
 
 module.exports = router;

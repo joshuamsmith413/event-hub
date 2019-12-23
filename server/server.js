@@ -9,10 +9,11 @@ app.use(cors())
 
 app.use(bodyParser.json())
 
-app.use('/api', api)
 app.get('/', (req, res) => {
-    res.send('hello from server')
+  res.send('hello from server')
 })
+
+app.use('/api', api)
 
 app.listen(PORT, () => {
     console.log(`server runnign on ${PORT}`)
