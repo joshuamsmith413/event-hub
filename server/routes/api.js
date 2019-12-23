@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const User = require('../models/user');
 const jwt = require('jsonwebtoken')
-const db = "mongodb+srv://josh:windows@cluster0-dymgv.mongodb.net/test?retryWrites=true&w=majority"
 const bcrypt = require('bcrypt');
+const db = "mongodb+srv://josh:windows@cluster0-dymgv.mongodb.net/test?retryWrites=true&w=majority"
+
+const Event = require('../models/event')
+const User = require('../models/user');
 
 
 // const MongoClient = require('mongodb').MongoClient;
@@ -34,46 +36,9 @@ function verifyToken(req, res, next) {
   next()
 }
 
-router.get('/events', (req,res) => {
-  let events = [
-    {
-      "_id": "1",
-      "name": "Auto Expo",
-      "description": "lorem ipsum",
-      "date": "2012-04-23T18:25:43.511Z"
-    },
-    {
-      "_id": "2",
-      "name": "Auto Expo",
-      "description": "lorem ipsum",
-      "date": "2012-04-23T18:25:43.511Z"
-    },
-    {
-      "_id": "3",
-      "name": "Auto Expo",
-      "description": "lorem ipsum",
-      "date": "2012-04-23T18:25:43.511Z"
-    },
-    {
-      "_id": "4",
-      "name": "Auto Expo",
-      "description": "lorem ipsum",
-      "date": "2012-04-23T18:25:43.511Z"
-    },
-    {
-      "_id": "5",
-      "name": "Auto Expo",
-      "description": "lorem ipsum",
-      "date": "2012-04-23T18:25:43.511Z"
-    },
-    {
-      "_id": "6",
-      "name": "Auto Expo",
-      "description": "lorem ipsum",
-      "date": "2012-04-23T18:25:43.511Z"
-    }
-  ]
-  res.json(events)
+router.get('/events', async (req,res) => {
+  const events = await Event.find({});
+  res.json(events);
 })
 
 router.get('/special', verifyToken, (req, res) => {
@@ -116,6 +81,17 @@ router.get('/special', verifyToken, (req, res) => {
     }
   ]
   res.json(specialEvents)
+})
+
+router.post('/events', (req, res) => {
+  const event = new Event(req.body)
+  event.save((err, savedEvent) => {
+    if (err) {
+      res.status(400).send(err)
+    } else {
+      res.status(200).send(savedEvent)
+    }
+  })
 })
 
 router.post('/register', (req, res) => {
