@@ -11,11 +11,15 @@ export class EventService {
 
   constructor(private http: HttpClient) { }
 
+  createEvent(event: any) {
+    return this.http.post<any>(this._eventsUrl, event);
+  }
+
   getEvents() {
-    return this.http.get<any>(this._eventsUrl)
+    return this.http.get<any>(this._eventsUrl);
   }
 
   getSpecialEvents() {
-    return this.http.get<any>(this._specialEventsUrl)
+    return this.http.get<any>(this._specialEventsUrl);
   }
 }

@@ -4,6 +4,7 @@ import { RegisterComponent } from './register/register.component';
 import { SpecialEventsComponent } from './special-events/special-events.component';
 import { LoginComponent } from './login/login.component';
 import { EventsComponent } from './events/events.component';
+import { EventNewComponent } from './event-new/event-new.component';
 import { AuthGuard } from './auth.guard';
 
 
@@ -29,6 +30,10 @@ const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent
+  },
+  {
+    path: 'event/new',
+    component: EventNewComponent
   }
 ];
 

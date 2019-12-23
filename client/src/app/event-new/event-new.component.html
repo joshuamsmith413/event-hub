@@ -1,0 +1,26 @@
+<div class="row pt-5">
+  <div class="col-md-6 mx-auto">
+    <div class="card rounded-0">
+      <div class="card-header">
+        <h3 class="mb-0">New Event</h3>
+      </div>
+      <div class="car-body">
+        <form class="form">
+          <div class="form-group">
+            <label for="">Name of Event</label>
+            <input [(ngModel)]="newEventData.name" name="name" type="text" class="form-control rounded-0" required>
+          </div>
+          <div class="form-group">
+            <label for="">description</label>
+            <input [(ngModel)]="newEventData.description" name="description" type="text" class="form-control rounded-0" required>
+          </div>
+          <div class="form-group">
+            <label for="">price</label>
+            <input [(ngModel)]="newEventData.price" name="price" type="number" class="form-control rounded-0" required>
+          </div>
+          <button (click)="addEvent()" class="btn btn-primary float-right">Create Event</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
