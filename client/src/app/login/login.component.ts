@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
 
   loginUserData = {};
-  
+  error;
   constructor(private _auth: AuthService,
               private _router: Router
     ) { }
@@ -22,12 +22,12 @@ export class LoginComponent implements OnInit {
     this._auth.loginUser(this.loginUserData)
     .subscribe(
       res => {
-        console.log(res);
         localStorage.setItem('token', res.token);
         this._router.navigate(['/special']);
       },
-      err => console.log(err)
+      err => {
+        this.error = true
+    }
     );
   }
-
 }
